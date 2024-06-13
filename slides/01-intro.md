@@ -1,10 +1,10 @@
 ---
 author: Colin Gross
-title: Return to C++
+title: SVG
 date: 2024-02-29
 ---
 
-# Getting Back into C++
-  - Bravo Data Prep tools
-  - Modern-ish C++
-  - CMake
+# Scalable Vector Graphics (SVG)
+  - What SVG is.
+  - Plotting data.
+  - How BRAVO is using SVG.

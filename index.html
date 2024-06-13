@@ -5,7 +5,7 @@
   <meta name="generator" content="pandoc">
   <meta name="author" content="Colin Gross">
   <meta name="dcterms.date" content="2024-02-29">
-  <title>Return to C++</title>
+  <title>SVG</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -96,206 +96,455 @@
     <div class="slides">
 
 <section id="title-slide">
-  <h1 class="title">Return to C++</h1>
+  <h1 class="title">SVG</h1>
   <p class="author">Colin Gross</p>
   <p class="date">2024-02-29</p>
 </section>
 
-<section id="getting-back-into-c" class="title-slide slide level1">
-<h1>Getting Back into C++</h1>
+<section id="scalable-vector-graphics-svg" class="title-slide slide level1">
+<h1>Scalable Vector Graphics (SVG)</h1>
 <ul>
-<li>Bravo Data Prep tools</li>
-<li>Modern-ish C++</li>
-<li>CMake</li>
+<li>What SVG is.</li>
+<li>Plotting data.</li>
+<li>How BRAVO is using SVG.</li>
 </ul>
 </section>
 
 <section>
-<section id="c14-and-c17" class="title-slide slide level1">
-<h1>C++14 and C++17</h1>
-<p>New to me features</p>
+<section id="svg-format" class="title-slide slide level1">
+<h1>SVG Format</h1>
+<p>Image format based on XML. Open standard developed for the web.</p>
 </section>
-<section id="uniform-initialization" class="slide level2">
-<h2>Uniform initialization</h2>
-<p>Old ways</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> a<span class="op">;</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> b<span class="op">=</span><span class="dv">3</span><span class="op">;</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> c<span class="op">(</span><span class="dv">4</span><span class="op">);</span></span></code></pre></div>
-<p>Uniform ways</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> a<span class="op">{};</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> b<span class="op">{</span><span class="dv">3</span><span class="op">};</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> c<span class="op">{</span><span class="dv">4</span><span class="op">};</span></span></code></pre></div>
+<section id="describes-geometries-and-styling" class="slide level2">
+<h2>Describes Geometries and Styling</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode svg"><code class="sourceCode xml"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">svg</span><span class="ot"> height=</span><span class="st">&quot;100&quot;</span><span class="ot"> width=</span><span class="st">&quot;100&quot;</span>&gt;</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">rect</span><span class="ot"> height=</span><span class="st">&quot;100%&quot;</span><span class="ot"> width=</span><span class="st">&quot;100%&quot;</span><span class="ot"> fill=</span><span class="st">&quot;#7ecadf&quot;</span>/&gt;</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">circle</span><span class="ot"> r=</span><span class="st">&quot;45&quot;</span><span class="ot"> cx=</span><span class="st">&quot;50&quot;</span><span class="ot"> cy=</span><span class="st">&quot;50&quot;</span><span class="ot"> fill=</span><span class="st">&quot;green&quot;</span> /&gt;</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">svg</span>&gt; </span></code></pre></div>
+<svg height="100" width="100">
+<rect height="100%" width="100%" fill="#7ecadf"/> <circle r="45" cx="50" cy="50" fill="green" />
+</svg>
 </section>
-<section id="auto" class="slide level2">
-<h2>Auto</h2>
-<p>A keyword that used to be redundant.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>vector<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;</span> gen_numbers<span class="op">(){</span> <span class="co">/*...*/</span> <span class="op">}</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">(){</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">// explicit type</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  vector<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;</span> x_numbers <span class="op">=</span> gen_numbers<span class="op">();</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="co">// let the compiler figure it out</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="kw">auto</span> a_numbers <span class="op">=</span> gen_numbers<span class="op">();</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<section id="scaling" class="slide level2">
+<h2>Scaling</h2>
+<p>Same content with different image sizes scales without quality loss.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode svg"><code class="sourceCode xml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">svg</span><span class="ot"> height=</span><span class="st">&quot;25&quot;</span><span class="ot"> width=</span><span class="st">&quot;25&quot;</span>&gt;</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">rect</span><span class="ot"> height=</span><span class="st">&quot;100%&quot;</span><span class="ot"> width=</span><span class="st">&quot;100%&quot;</span><span class="ot"> fill=</span><span class="st">&quot;#7ecadf&quot;</span>/&gt;</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">circle</span><span class="ot"> r=</span><span class="st">&quot;45%&quot;</span><span class="ot"> cx=</span><span class="st">&quot;50%&quot;</span><span class="ot"> cy=</span><span class="st">&quot;50%&quot;</span><span class="ot"> fill=</span><span class="st">&quot;green&quot;</span> /&gt;</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">svg</span>&gt; </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">svg</span><span class="ot"> height=</span><span class="st">&quot;150&quot;</span><span class="ot"> width=</span><span class="st">&quot;150&quot;</span>&gt;</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">rect</span><span class="ot"> height=</span><span class="st">&quot;100%&quot;</span><span class="ot"> width=</span><span class="st">&quot;100%&quot;</span><span class="ot"> fill=</span><span class="st">&quot;#7ecadf&quot;</span>/&gt;</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">circle</span><span class="ot"> r=</span><span class="st">&quot;45%&quot;</span><span class="ot"> cx=</span><span class="st">&quot;50%&quot;</span><span class="ot"> cy=</span><span class="st">&quot;50%&quot;</span><span class="ot"> fill=</span><span class="st">&quot;green&quot;</span> /&gt;</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">svg</span>&gt; </span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">svg</span><span class="ot"> height=</span><span class="st">&quot;500&quot;</span><span class="ot"> width=</span><span class="st">&quot;500&quot;</span>&gt;</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">rect</span><span class="ot"> height=</span><span class="st">&quot;100%&quot;</span><span class="ot"> width=</span><span class="st">&quot;100%&quot;</span><span class="ot"> fill=</span><span class="st">&quot;#7ecadf&quot;</span>/&gt;</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">circle</span><span class="ot"> r=</span><span class="st">&quot;45%&quot;</span><span class="ot"> cx=</span><span class="st">&quot;50%&quot;</span><span class="ot"> cy=</span><span class="st">&quot;50%&quot;</span><span class="ot"> fill=</span><span class="st">&quot;green&quot;</span> /&gt;</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">svg</span>&gt; </span></code></pre></div>
 </section>
-<section id="stdfilesystem" class="slide level2">
-<h2>std::filesystem</h2>
-<p>Convenient way of building paths in the standard libarary.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include</span><span class="im">&lt;filesystem&gt;</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>filesystem<span class="bu">::</span>path<span class="op"> </span>dir<span class="op">{</span>TEST_DATA_DIR<span class="op">};</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>filesystem<span class="bu">::</span>path<span class="op"> </span>file<span class="op">{</span><span class="st">&quot;structvar_sample_input.vcf&quot;</span><span class="op">};</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>filesystem<span class="bu">::</span>path<span class="op"> </span>path<span class="op">{</span>test_data_dir <span class="op">/</span> test_data_file<span class="op">};</span></span></code></pre></div>
+<section id="scaling-1" class="slide level2">
+<h2>Scaling</h2>
+<svg height="25" width="25">
+<rect height="100%" width="100%" fill="#7ecadf"/> <circle r="45%" cx="50%" cy="50%" fill="green" />
+</svg>
+<svg height="150" width="150">
+<rect height="100%" width="100%" fill="#7ecadf"/> <circle r="45%" cx="50%" cy="50%" fill="green" />
+</svg>
+<svg height="500" width="500">
+<rect height="100%" width="100%" fill="#7ecadf"/> <circle r="45%" cx="50%" cy="50%" fill="green" />
+</svg>
 </section>
-<section id="stdmove" class="slide level2">
-<h2>std::move</h2>
-<blockquote>
-<p>std::move is used to indicate that an object t may be “moved from”, i.e. allowing the efficient transfer of resources from t to another object.</p>
-</blockquote>
-<ul>
-<li>Makes it possible to “steal” resources like streams or connections.</li>
-<li>Avoids a lot of uneccissary copies.</li>
-<li>Complilers will use it where appropriate.</li>
-</ul>
-</section>
-<section id="odds-and-ends" class="slide level2">
-<h2>Odds and ends</h2>
-<p>Small things that caught my eye</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Instead of char</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>byte<span class="op"> </span>foo<span class="op">;</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">// A smarter thing that could be one of three types</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="bu">std::</span>variant<span class="op">&lt;</span>BCF_BT_INT32<span class="op">,</span> BCF_BT_INT16<span class="op">,</span> BCF_BT_INT8<span class="op">&gt;</span> fmt_value<span class="op">;</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">// Ruby-ish namespaces</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="kw">namespace</span> Foo<span class="op">::</span>Bar<span class="op">::</span>Baz <span class="op">{</span> <span class="co">/*...*/</span> <span class="op">}</span></span></code></pre></div>
+<section id="dom-accessible" class="slide level2">
+<h2>DOM Accessible</h2>
+<script>
+function changeColor(){
+  let circle = document.getElementById("my-circle");
+  console.log(circle.style.fill);
+  if(circle.style.fill === "lightgreen"){
+    circle.style.fill = "green";
+  }else{
+    circle.style.fill = "lightgreen";
+  }
+}
+</script>
+<p>SVG elements are accessible and manipulatable as part of a document model.</p>
+<svg height="100" width="200">
+<rect height="100%" width="100%" fill="#7ecadf"/> <circle id="my-circle" r="45%" cx="50%" cy="50%" fill="green" />
+</svg>
+<button onclick="changeColor()">
+Toggle Color
+</button>
+<div class="sourceCode" id="cb3"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">toggleColor</span>(){</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> circle <span class="op">=</span> <span class="bu">document</span><span class="op">.</span><span class="fu">getElementById</span>(<span class="st">&quot;my-circle&quot;</span>)<span class="op">;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(circle<span class="op">.</span><span class="at">style</span><span class="op">.</span><span class="at">fill</span> <span class="op">===</span> <span class="st">&quot;lightgreen&quot;</span>){</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    circle<span class="op">.</span><span class="at">style</span><span class="op">.</span><span class="at">fill</span> <span class="op">=</span> <span class="st">&quot;green&quot;</span><span class="op">;</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  }<span class="cf">else</span>{</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    circle<span class="op">.</span><span class="at">style</span><span class="op">.</span><span class="at">fill</span> <span class="op">=</span> <span class="st">&quot;lightgreen&quot;</span><span class="op">;</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 </section></section>
 <section>
-<section id="cmake" class="title-slide slide level1">
-<h1>CMake</h1>
+<section id="plotting" class="title-slide slide level1">
+<h1>Plotting</h1>
 <ul>
-<li>Build system</li>
-<li>Modules for common uses</li>
-<li>Widely adopted</li>
+<li>Javascript Library D3</li>
+<li>Translate data space to figure space</li>
 </ul>
 </section>
-<section id="replacing-cget" class="slide level2">
-<h2>Replacing Cget</h2>
+<section id="d3" class="slide level2">
+<h2>D3</h2>
 <ul>
-<li>Fewer build dependencies</li>
-<li>Cmake modules cover use cases:
-<ul>
-<li>htslib</li>
-<li>libboost</li>
-</ul></li>
+<li>Designed to visualize data</li>
+<li>Tools to manipulate data</li>
+<li>Tools to manipulate SVGs</li>
 </ul>
 </section>
-<section id="no-in-source-builds" class="slide level2">
-<h2>No In-Source Builds</h2>
-<p>Build artifacts no longer welcome amongst source files.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode cmake"><code class="sourceCode cmake"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> ( <span class="dv">${CMAKE_SOURCE_DIR}</span> <span class="ot">STREQUAL</span> <span class="dv">${CMAKE_BINARY_DIR}</span> )</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">message</span>(<span class="ot">FATAL_ERROR</span> </span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;In-source builds not allowed.</span><span class="sc">\n</span><span class="st">&quot;</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Please run from CMake from the build directory, or use -B flag.&quot;</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;After removing CMakeCache.txt (rm CMakeCache.txt)</span><span class="sc">\n</span><span class="st">&quot;</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot; cd ./build</span><span class="sc">\n</span><span class="st">&quot;</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot; cmake --build ..</span><span class="sc">\n</span><span class="st">&quot;</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;### OR ###</span><span class="sc">\n</span><span class="st">&quot;</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot; cmake -S . -B ./build</span><span class="sc">\n</span><span class="st">&quot;</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot; cmake --build ./build&quot;</span>)</span></code></pre></div>
+<section id="display-vs-data-coordinate-systems" class="slide level2">
+<h2>Display vs Data Coordinate Systems</h2>
+<p>First and significant hurdle to plotting data.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode svg"><code class="sourceCode xml"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">svg</span><span class="ot"> id=</span><span class="st">&quot;c-demo&quot;</span><span class="ot"> height=</span><span class="er">300</span> <span class="er">width=500&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ot">[</span> <span class="fu">{</span><span class="er">name</span><span class="fu">:</span> <span class="st">&quot;Datsun 710&quot;</span><span class="fu">,</span> <span class="er">mpg</span><span class="fu">:</span> <span class="fl">22.8</span><span class="fu">,</span> <span class="er">cyl</span><span class="fu">:</span> <span class="dv">4</span><span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">{</span><span class="er">name</span><span class="fu">:</span> <span class="st">&quot;Mazda RX4&quot;</span><span class="fu">,</span>  <span class="er">mpg</span><span class="fu">:</span> <span class="fl">21.0</span><span class="fu">,</span> <span class="er">cyl</span><span class="fu">:</span> <span class="dv">6</span><span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">{</span><span class="er">name</span><span class="fu">:</span> <span class="st">&quot;Valiant&quot;</span><span class="fu">,</span>    <span class="er">mpg</span><span class="fu">:</span> <span class="fl">18.1</span><span class="fu">,</span> <span class="er">cyl</span><span class="fu">:</span> <span class="dv">6</span><span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">{</span><span class="er">name</span><span class="fu">:</span> <span class="st">&quot;Camaro Z28&quot;</span><span class="fu">,</span> <span class="er">mpg</span><span class="fu">:</span> <span class="fl">13.3</span><span class="fu">,</span> <span class="er">cyl</span><span class="fu">:</span> <span class="dv">8</span><span class="fu">}</span> <span class="ot">]</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> x_scale <span class="op">=</span> d3<span class="op">.</span><span class="fu">scaleLinear</span>()</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                  <span class="op">.</span><span class="fu">domain</span>([<span class="dv">0</span><span class="op">,</span><span class="dv">10</span>])<span class="op">.</span><span class="fu">range</span>([<span class="dv">30</span><span class="op">,</span> <span class="dv">490</span>])<span class="op">;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> y_scale <span class="op">=</span> d3<span class="op">.</span><span class="fu">scaleLinear</span>()</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>                  <span class="op">.</span><span class="fu">domain</span>([<span class="dv">0</span><span class="op">,</span><span class="dv">30</span>])<span class="op">.</span><span class="fu">range</span>([<span class="dv">30</span><span class="op">,</span> <span class="dv">290</span>])<span class="op">;</span></span></code></pre></div>
 </section>
-<section id="getting-other-cmake-projects" class="slide level2">
-<h2>Getting other CMake Projects</h2>
-<p>Idioms for getting other cmake projects.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode cmake"><code class="sourceCode cmake"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">FetchContent_Declare</span>(</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  boost</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  GIT_REPOSITORY https://github.com/boostorg/boost.git</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  GIT_SHALLOW <span class="ot">TRUE</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  GIT_TAG boost-<span class="dt">1.80.0</span>)</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="fu">FetchContent_Declare</span>(</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  googletest</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  URL https://github.com/google/googletest/archive/<span class="dt">0359</span>...d395.zip</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<section id="coordinate-origin-difference" class="slide level2">
+<h2>Coordinate origin difference</h2>
+<ul>
+<li>SVG origin is at the top left.</li>
+<li>People expect origin at the bottom left.</li>
+</ul>
+<svg id="c-demo" height="300" width="500">
+<rect id="bkgd" height="100%" width="100%" fill="lightgrey"/> <g id="points"></g> <g id="point-labs" style="font-size: 14px;"></g> <g id="axis-labs" style="font-size: 12px;"> <text id="x-lab" transform="translate(230 15)" >cylinders</text> <text id="y-lab" transform="translate(10 180) rotate(-90)">mpg</text> </g> <g id="x-axis"> </g> <g id="y-axis"> </g>
+</svg>
+<script src="https://d3js.org/d3.v4.js"></script>
+<script>
+// MPG to Cylinders figure
+  let mtcars = [
+    {name: "Mazda RX4", mpg: 21.0, cyl: 6, disp: 160, hp: 110},
+    {name: "Datsun 710", mpg: 22.8, cyl: 4, disp: 108, hp: 93},
+    {name: "Valiant", mpg: 18.1, cyl: 6, disp: 225, hp: 105},
+    {name: "Camaro Z28", mpg: 13.3, cyl: 8, disp: 350, hp:245} ];
+
+  let x_scale = d3.scaleLinear()
+                  .domain([0,10]).range([40, 490]);
+  let y_scale = d3.scaleLinear()
+                  .domain([0,30]).range([40, 290]);
+
+  let points = d3.selectAll("#points").selectAll();
+  let point_labs = d3.selectAll("#point-labs").selectAll();
+
+  points.data(mtcars).enter()
+    .append("circle")
+    .attr("cx", d => x_scale(d.cyl))
+    .attr("cy", d => y_scale(d.mpg))
+    .attr("r", 2);
+
+  point_labs.data(mtcars).enter()
+    .append("text")
+    .attr("x", d => x_scale(d.cyl))
+    .attr("y", d => y_scale(d.mpg))
+    .attr("transform", "translate(5 5)")
+    .text(d => d.name);
+
+  d3.selectAll("#x-axis")
+    .attr("transform", "translate(0 40)")
+    .call(d3.axisTop(x_scale));
+
+  d3.selectAll("#y-axis")
+    .attr("transform", "translate(40 0)")
+    .call(d3.axisLeft(y_scale));
+</script>
 </section>
-<section id="building-htslib" class="slide level2">
-<h2>Building htslib</h2>
-<p>Not a cmake project (uses make and autoconf)</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode cmake"><code class="sourceCode cmake"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ExternalProject_Add</span>(</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  htslib</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  PREFIX <span class="dv">${htslib_PREFIX}</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  URL https://github.com/samtools/htslib/.../htslib-<span class="dt">1.19.1</span>.tar.bz2</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  CONFIGURE_COMMAND autoreconf -i &amp;&amp; \</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    ./configure --without-libdeflate --prefix=<span class="dv">${htslib_PREFIX}</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  BUILD_COMMAND <span class="dv">${MAKE_COMMAND}</span> lib-static</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  INSTALL_COMMAND <span class="dv">${MAKE_COMMAND}</span> \</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    install prefix=<span class="dv">${htslib_INSTALL}</span></span></code></pre></div>
-</section>
-<section id="finding-system-libs" class="slide level2">
-<h2>Finding System Libs</h2>
-<p>The ones we need already have modules maintained by CMake.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode cmake"><code class="sourceCode cmake"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">include</span>(FindZLIB)</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="kw">include</span>(FindBZip2)</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="kw">include</span>(FindLibLZMA)</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="kw">include</span>(FindCURL)</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="kw">include</span>(FindOpenSSL)</span></code></pre></div>
+<section id="correct-y-axis-using-reversed-scale" class="slide level2">
+<h2>Correct y-axis using reversed scale</h2>
+<div class="sourceCode" id="cb7"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> y_scale <span class="op">=</span> d3<span class="op">.</span><span class="fu">scaleLinear</span>()</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">domain</span>([<span class="dv">0</span><span class="op">,</span><span class="dv">30</span>])<span class="op">.</span><span class="fu">range</span>([<span class="dv">260</span><span class="op">,</span> <span class="dv">10</span>])<span class="op">;</span></span></code></pre></div>
+<svg id="d2" height="300" width="500">
+<rect id="d2-bkgd" height="100%" width="100%" fill="lightgrey"/> <g id="d2-points"></g> <g id="d2-point-labs" style="font-size: 14px;"></g> <g id="d2-axis-labs" style="font-size: 12px;"> <text id="d2-x-lab" transform="translate(230 290)" >cylinders</text> <text id="d2-y-lab" transform="translate(10 180) rotate(-90)">mpg</text> </g> <g id="d2-x-axis"> </g> <g id="d2-y-axis"> </g>
+</svg>
+<p>Subsequent data can be mapped without concern using the scales.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">attr</span>(<span class="st">&quot;x&quot;</span><span class="op">,</span> d <span class="kw">=&gt;</span> <span class="fu">x_scale</span>(d<span class="op">.</span><span class="at">cyl</span>))</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">attr</span>(<span class="st">&quot;y&quot;</span><span class="op">,</span> d <span class="kw">=&gt;</span> <span class="fu">y_scale</span>(d<span class="op">.</span><span class="at">mpg</span>))</span></code></pre></div>
+<script>
+let x_scale2 = d3.scaleLinear()
+                .domain([0,10]).range([40, 490]);
+let y_scale2 = d3.scaleLinear()
+                .domain([0,30]).range([260, 10]);
+
+let points2 = d3.selectAll("#d2-points").selectAll();
+let point_labs2 = d3.selectAll("#d2-point-labs").selectAll();
+
+points2.data(mtcars).enter()
+  .append("circle")
+  .attr("cx", d => x_scale2(d.cyl))
+  .attr("cy", d => y_scale2(d.mpg))
+  .attr("r", 2);
+
+point_labs2.data(mtcars).enter()
+  .append("text")
+  .attr("x", d => x_scale2(d.cyl))
+  .attr("y", d => y_scale2(d.mpg))
+  .attr("transform", "translate(5 5)")
+  .text(d => d.name);
+
+d3.selectAll("#d2-x-axis")
+  .attr("transform", "translate(0 260)")
+  .call(d3.axisBottom(x_scale2));
+
+d3.selectAll("#d2-y-axis")
+  .attr("transform", "translate(40 -0)")
+  .call(d3.axisLeft(y_scale2));
+</script>
 </section></section>
 <section>
-<section id="modern-patterns-and-guidelines" class="title-slide slide level1">
-<h1>Modern Patterns and Guidelines</h1>
+<section id="bravo-use-of-svg" class="title-slide slide level1">
+<h1>BRAVO use of SVG</h1>
 <ul>
-<li>C++ Core Guidlines (ISO Cpp)</li>
-<li>Google</li>
-<li>NASA’s 10 Rules</li>
-<li>LLVM</li>
+<li>Sequence Depth</li>
+<li>Transcript Location</li>
+<li>Variant Count</li>
 </ul>
 </section>
-<section id="example-fallibe-constructors" class="slide level2">
-<h2>Example: Fallibe Constructors</h2>
-<p>E.g. needs to open a file or use a library(htslib) in the constructor</p>
+<section id="plotting-depth" class="slide level2">
+<h2>Plotting Depth</h2>
+<p>Lots of data points</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;chrom&quot;</span><span class="fu">:</span> <span class="st">&quot;1&quot;</span><span class="fu">,</span> <span class="dt">&quot;end&quot;</span><span class="fu">:</span> <span class="dv">50185001</span><span class="fu">,</span> <span class="dt">&quot;mean&quot;</span><span class="fu">:</span> <span class="fl">36.3528</span><span class="fu">,</span> <span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="dv">50185000</span> <span class="fu">}</span><span class="er">,</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;chrom&quot;</span><span class="fu">:</span> <span class="st">&quot;1&quot;</span><span class="fu">,</span> <span class="dt">&quot;end&quot;</span><span class="fu">:</span> <span class="dv">50185004</span><span class="fu">,</span> <span class="dt">&quot;mean&quot;</span><span class="fu">:</span> <span class="fl">35.9806</span><span class="fu">,</span> <span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="dv">50185002</span> <span class="fu">}</span><span class="er">,</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;chrom&quot;</span><span class="fu">:</span> <span class="st">&quot;1&quot;</span><span class="fu">,</span> <span class="dt">&quot;end&quot;</span><span class="fu">:</span> <span class="dv">50185005</span><span class="fu">,</span> <span class="dt">&quot;mean&quot;</span><span class="fu">:</span> <span class="fl">36.4722</span><span class="fu">,</span> <span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="dv">50185005</span> <span class="fu">}</span><span class="er">,</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;chrom&quot;</span><span class="fu">:</span> <span class="st">&quot;1&quot;</span><span class="fu">,</span> <span class="dt">&quot;end&quot;</span><span class="fu">:</span> <span class="dv">50185011</span><span class="fu">,</span> <span class="dt">&quot;mean&quot;</span><span class="fu">:</span> <span class="fl">36.1583</span><span class="fu">,</span> <span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="dv">50185006</span> <span class="fu">}</span><span class="er">,</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;chrom&quot;</span><span class="fu">:</span> <span class="st">&quot;1&quot;</span><span class="fu">,</span> <span class="dt">&quot;end&quot;</span><span class="fu">:</span> <span class="dv">50185013</span><span class="fu">,</span> <span class="dt">&quot;mean&quot;</span><span class="fu">:</span> <span class="fl">36.2833</span><span class="fu">,</span> <span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="dv">50185012</span> <span class="fu">}</span><span class="er">,</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;chrom&quot;</span><span class="fu">:</span> <span class="st">&quot;1&quot;</span><span class="fu">,</span> <span class="dt">&quot;end&quot;</span><span class="fu">:</span> <span class="dv">50185017</span><span class="fu">,</span> <span class="dt">&quot;mean&quot;</span><span class="fu">:</span> <span class="fl">36.1222</span><span class="fu">,</span> <span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="dv">50185014</span> <span class="fu">}</span><span class="er">,</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;chrom&quot;</span><span class="fu">:</span> <span class="st">&quot;1&quot;</span><span class="fu">,</span> <span class="dt">&quot;end&quot;</span><span class="fu">:</span> <span class="dv">50185018</span><span class="fu">,</span> <span class="dt">&quot;mean&quot;</span><span class="fu">:</span> <span class="fl">36.6639</span><span class="fu">,</span> <span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="dv">50185018</span> <span class="fu">}</span><span class="er">,</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;chrom&quot;</span><span class="fu">:</span> <span class="st">&quot;1&quot;</span><span class="fu">,</span> <span class="dt">&quot;end&quot;</span><span class="fu">:</span> <span class="dv">50185019</span><span class="fu">,</span> <span class="dt">&quot;mean&quot;</span><span class="fu">:</span> <span class="fl">36.075</span><span class="fu">,</span> <span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="dv">50185019</span> <span class="fu">}</span><span class="er">,</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;chrom&quot;</span><span class="fu">:</span> <span class="st">&quot;1&quot;</span><span class="fu">,</span> <span class="dt">&quot;end&quot;</span><span class="fu">:</span> <span class="dv">50185020</span><span class="fu">,</span> <span class="dt">&quot;mean&quot;</span><span class="fu">:</span> <span class="fl">36.7889</span><span class="fu">,</span> <span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="dv">50185020</span> <span class="fu">}</span><span class="er">,</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;chrom&quot;</span><span class="fu">:</span> <span class="st">&quot;1&quot;</span><span class="fu">,</span> <span class="dt">&quot;end&quot;</span><span class="fu">:</span> <span class="dv">50185022</span><span class="fu">,</span> <span class="dt">&quot;mean&quot;</span><span class="fu">:</span> <span class="fl">35.9389</span><span class="fu">,</span> <span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="dv">50185021</span> <span class="fu">}</span><span class="er">,</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;chrom&quot;</span><span class="fu">:</span> <span class="st">&quot;1&quot;</span><span class="fu">,</span> <span class="dt">&quot;end&quot;</span><span class="fu">:</span> <span class="dv">50185023</span><span class="fu">,</span> <span class="dt">&quot;mean&quot;</span><span class="fu">:</span> <span class="fl">36.6417</span><span class="fu">,</span> <span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="dv">50185023</span> <span class="fu">}</span><span class="er">,</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;chrom&quot;</span><span class="fu">:</span> <span class="st">&quot;1&quot;</span><span class="fu">,</span> <span class="dt">&quot;end&quot;</span><span class="fu">:</span> <span class="dv">50185026</span><span class="fu">,</span> <span class="dt">&quot;mean&quot;</span><span class="fu">:</span> <span class="fl">35.8694</span><span class="fu">,</span> <span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="dv">50185024</span> <span class="fu">}</span><span class="er">,</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;chrom&quot;</span><span class="fu">:</span> <span class="st">&quot;1&quot;</span><span class="fu">,</span> <span class="dt">&quot;end&quot;</span><span class="fu">:</span> <span class="dv">50185027</span><span class="fu">,</span> <span class="dt">&quot;mean&quot;</span><span class="fu">:</span> <span class="fl">46.3778</span><span class="fu">,</span> <span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="dv">50185027</span> <span class="fu">}</span><span class="er">,</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;chrom&quot;</span><span class="fu">:</span> <span class="st">&quot;1&quot;</span><span class="fu">,</span> <span class="dt">&quot;end&quot;</span><span class="fu">:</span> <span class="dv">50185028</span><span class="fu">,</span> <span class="dt">&quot;mean&quot;</span><span class="fu">:</span> <span class="fl">46.1444</span><span class="fu">,</span> <span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="dv">50185028</span> <span class="fu">}</span><span class="er">,</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;chrom&quot;</span><span class="fu">:</span> <span class="st">&quot;1&quot;</span><span class="fu">,</span> <span class="dt">&quot;end&quot;</span><span class="fu">:</span> <span class="dv">50185030</span><span class="fu">,</span> <span class="dt">&quot;mean&quot;</span><span class="fu">:</span> <span class="fl">46.5</span><span class="fu">,</span> <span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="dv">50185029</span> <span class="fu">}</span><span class="er">,</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;chrom&quot;</span><span class="fu">:</span> <span class="st">&quot;1&quot;</span><span class="fu">,</span> <span class="dt">&quot;end&quot;</span><span class="fu">:</span> <span class="dv">50185032</span><span class="fu">,</span> <span class="dt">&quot;mean&quot;</span><span class="fu">:</span> <span class="fl">46.0417</span><span class="fu">,</span> <span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="dv">50185031</span> <span class="fu">}</span><span class="er">,</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;chrom&quot;</span><span class="fu">:</span> <span class="st">&quot;1&quot;</span><span class="fu">,</span> <span class="dt">&quot;end&quot;</span><span class="fu">:</span> <span class="dv">50185033</span><span class="fu">,</span> <span class="dt">&quot;mean&quot;</span><span class="fu">:</span> <span class="fl">46.3806</span><span class="fu">,</span> <span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="dv">50185033</span> <span class="fu">}</span><span class="er">,</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;chrom&quot;</span><span class="fu">:</span> <span class="st">&quot;1&quot;</span><span class="fu">,</span> <span class="dt">&quot;end&quot;</span><span class="fu">:</span> <span class="dv">50185039</span><span class="fu">,</span> <span class="dt">&quot;mean&quot;</span><span class="fu">:</span> <span class="fl">45.8056</span><span class="fu">,</span> <span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="dv">50185034</span> <span class="fu">}</span><span class="er">,</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;chrom&quot;</span><span class="fu">:</span> <span class="st">&quot;1&quot;</span><span class="fu">,</span> <span class="dt">&quot;end&quot;</span><span class="fu">:</span> <span class="dv">50185042</span><span class="fu">,</span> <span class="dt">&quot;mean&quot;</span><span class="fu">:</span> <span class="fl">45.4833</span><span class="fu">,</span> <span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="dv">50185040</span> <span class="fu">}</span><span class="er">,</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;chrom&quot;</span><span class="fu">:</span> <span class="st">&quot;1&quot;</span><span class="fu">,</span> <span class="dt">&quot;end&quot;</span><span class="fu">:</span> <span class="dv">50185044</span><span class="fu">,</span> <span class="dt">&quot;mean&quot;</span><span class="fu">:</span> <span class="fl">35.95</span><span class="fu">,</span> <span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="dv">50185043</span> <span class="fu">}</span><span class="er">,</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;chrom&quot;</span><span class="fu">:</span> <span class="st">&quot;1&quot;</span><span class="fu">,</span> <span class="dt">&quot;end&quot;</span><span class="fu">:</span> <span class="dv">50185046</span><span class="fu">,</span> <span class="dt">&quot;mean&quot;</span><span class="fu">:</span> <span class="fl">35.3972</span><span class="fu">,</span> <span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="dv">50185045</span> <span class="fu">}</span><span class="er">,</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;chrom&quot;</span><span class="fu">:</span> <span class="st">&quot;1&quot;</span><span class="fu">,</span> <span class="dt">&quot;end&quot;</span><span class="fu">:</span> <span class="dv">50185053</span><span class="fu">,</span> <span class="dt">&quot;mean&quot;</span><span class="fu">:</span> <span class="fl">35.9722</span><span class="fu">,</span> <span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="dv">50185047</span> <span class="fu">}</span><span class="er">,</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;chrom&quot;</span><span class="fu">:</span> <span class="st">&quot;1&quot;</span><span class="fu">,</span> <span class="dt">&quot;end&quot;</span><span class="fu">:</span> <span class="dv">50185054</span><span class="fu">,</span> <span class="dt">&quot;mean&quot;</span><span class="fu">:</span> <span class="fl">35.3389</span><span class="fu">,</span> <span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="dv">50185054</span> <span class="fu">}</span><span class="er">,</span></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;chrom&quot;</span><span class="fu">:</span> <span class="st">&quot;1&quot;</span><span class="fu">,</span> <span class="dt">&quot;end&quot;</span><span class="fu">:</span> <span class="dv">50185055</span><span class="fu">,</span> <span class="dt">&quot;mean&quot;</span><span class="fu">:</span> <span class="fl">35.625</span><span class="fu">,</span> <span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="dv">50185055</span> <span class="fu">}</span><span class="er">,</span></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;chrom&quot;</span><span class="fu">:</span> <span class="st">&quot;1&quot;</span><span class="fu">,</span> <span class="dt">&quot;end&quot;</span><span class="fu">:</span> <span class="dv">50185056</span><span class="fu">,</span> <span class="dt">&quot;mean&quot;</span><span class="fu">:</span> <span class="fl">15.5278</span><span class="fu">,</span> <span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="dv">50185056</span> <span class="fu">}</span><span class="er">,</span></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span> <span class="dt">&quot;chrom&quot;</span><span class="fu">:</span> <span class="st">&quot;1&quot;</span><span class="fu">,</span> <span class="dt">&quot;end&quot;</span><span class="fu">:</span> <span class="dv">50185057</span><span class="fu">,</span> <span class="dt">&quot;mean&quot;</span><span class="fu">:</span> <span class="fl">16.0111</span><span class="fu">,</span> <span class="dt">&quot;start&quot;</span><span class="fu">:</span> <span class="dv">50185057</span> <span class="fu">}</span><span class="er">,</span></span></code></pre></div>
+</section>
+<section id="use-a-path" class="slide level2">
+<h2>Use a path</h2>
 <ul>
-<li>Might fail</li>
-<li>Might leave a leaky mess</li>
-<li>Forces caller to know about it and deal with it</li>
+<li>Instructions to follow go from one point to another.</li>
+<li>Useful for complex geometries and dense data.</li>
+<li>Difficult to read syntax</li>
 </ul>
+<div class="sourceCode" id="cb10"><pre class="sourceCode svg"><code class="sourceCode xml"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">path</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="ot">d=</span><span class="st">&quot;M40,71.1647659574468</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="st">L52.69230769230769,71.1647659574468</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="st">L52.69230769230769,73.30293617021275</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="st">L71.73076923076923,73.30293617021275</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="st">L71.73076923076923,70.47885106382978</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="st">L78.07692307692308,70.47885106382978</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="st">L78.07692307692308,72.28210638297875</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="st">L116.15384615384616,72.28210638297875</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="st">L116.15384615384616,71.56402127659575</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="st">L128.84615384615384,71.56402127659575</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="st">L128.84615384615384,72.48948936170211</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="st">L154.23076923076923,72.48948936170211</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="st">L154.23076923076923,69.37759574468086</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="st">L160.57692307692307,69.37759574468086</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="st">L160.57692307692307,72.76063829787233</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="st">L166.92307692307693,72.76063829787233</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="st">L166.92307692307693,68.65951063829789</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="st">L173.26923076923077,68.65951063829789</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="st">L173.26923076923077,73.54248936170214</span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="st">L185.96153846153845,73.54248936170214</span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="st">L185.96153846153845,69.50512765957447</span></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a><span class="st">L192.30769230769232,69.50512765957447</span></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a><span class="st">L192.30769230769232,73.94174468085106</span></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a><span class="st">L211.34615384615387,73.94174468085106</span></span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a><span class="st">L211.34615384615387,13.574340425531943</span></span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a><span class="st">L217.69230769230768,13.574340425531943</span></span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a><span class="st">L217.69230769230768,14.915148936170226</span></span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a><span class="st">L224.03846153846155,14.915148936170226</span></span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a><span class="st">L224.03846153846155,12.872340425531888</span></span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a><span class="st">L236.73076923076923,12.872340425531888</span></span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a><span class="st">L236.73076923076923,15.505127659574498</span></span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a><span class="st">L249.4230769230769,15.505127659574498</span></span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a><span class="st">L249.4230769230769,13.558255319148941</span></span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a><span class="st">L255.76923076923077,13.558255319148941</span></span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a><span class="st">L255.76923076923077,16.861446808510607</span></span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a><span class="st">L293.84615384615387,16.861446808510607</span></span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a><span class="st">L293.84615384615387,18.712957446808502</span></span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a><span class="st">L312.88461538461536,18.712957446808502</span></span>
+<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a><span class="st">L312.88461538461536,73.4787234042553</span></span>
+<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a><span class="st">L325.5769230769231,73.4787234042553</span></span>
+<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a><span class="st">L325.5769230769231,76.65438297872342</span></span>
+<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a><span class="st">L338.2692307692308,76.65438297872342</span></span>
+<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a><span class="st">L338.2692307692308,73.3511914893617</span></span>
+<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a><span class="st">L382.69230769230774,73.3511914893617</span></span>
+<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a><span class="st">L382.69230769230774,76.98929787234042</span></span>
+<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a><span class="st">L389.03846153846155,76.98929787234042</span></span>
+<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a><span class="st">L389.03846153846155,75.34574468085106</span></span>
+<span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a><span class="st">L395.38461538461536,75.34574468085106</span></span>
+<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a><span class="st">L395.38461538461536,190.79774468085105</span></span>
+<span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a><span class="st">L401.7307692307693,190.79774468085105</span></span>
+<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a><span class="st">L401.7307692307693,188.02134042553192</span></span>
+<span id="cb10-53"><a href="#cb10-53" aria-hidden="true" tabindex="-1"></a><span class="st">L408.0769230769231,188.02134042553192</span></span>
+<span id="cb10-54"><a href="#cb10-54" aria-hidden="true" tabindex="-1"></a><span class="st">L408.0769230769231,190.54268085106384</span></span>
+<span id="cb10-55"><a href="#cb10-55" aria-hidden="true" tabindex="-1"></a><span class="st">L420.7692307692307,190.54268085106384</span></span>
+<span id="cb10-56"><a href="#cb10-56" aria-hidden="true" tabindex="-1"></a><span class="st">L420.7692307692307,188.99448936170214</span></span>
+<span id="cb10-57"><a href="#cb10-57" aria-hidden="true" tabindex="-1"></a><span class="st">L535,188.99448936170214</span></span>
+<span id="cb10-58"><a href="#cb10-58" aria-hidden="true" tabindex="-1"></a><span class="st">L535,192.13855319148936</span></span>
+<span id="cb10-59"><a href="#cb10-59" aria-hidden="true" tabindex="-1"></a><span class="st">L554.0384615384615,192.13855319148936</span></span>
+<span id="cb10-60"><a href="#cb10-60" aria-hidden="true" tabindex="-1"></a><span class="st">L554.0384615384615,194.5955531914894</span></span>
+<span id="cb10-61"><a href="#cb10-61" aria-hidden="true" tabindex="-1"></a><span class="st">L560.3846153846154,194.5955531914894</span></span>
+<span id="cb10-62"><a href="#cb10-62" aria-hidden="true" tabindex="-1"></a><span class="st">L560.3846153846154,78.21808510638297</span></span>
+<span id="cb10-63"><a href="#cb10-63" aria-hidden="true" tabindex="-1"></a><span class="st">L573.0769230769231,78.21808510638297</span></span>
+<span id="cb10-64"><a href="#cb10-64" aria-hidden="true" tabindex="-1"></a><span class="st">L573.0769230769231,79.89380851063831</span></span>
+<span id="cb10-65"><a href="#cb10-65" aria-hidden="true" tabindex="-1"></a><span class="st">L649.2307692307693,79.89380851063831</span></span>
+<span id="cb10-66"><a href="#cb10-66" aria-hidden="true" tabindex="-1"></a><span class="st">L649.2307692307693,79.15963829787233</span></span>
+<span id="cb10-67"><a href="#cb10-67" aria-hidden="true" tabindex="-1"></a><span class="st">L655.5769230769231,79.15963829787233</span></span>
+<span id="cb10-68"><a href="#cb10-68" aria-hidden="true" tabindex="-1"></a><span class="st">L655.5769230769231,81.71257446808511</span></span>
+<span id="cb10-69"><a href="#cb10-69" aria-hidden="true" tabindex="-1"></a><span class="st">L693.6538461538462,81.71257446808511</span></span>
+<span id="cb10-70"><a href="#cb10-70" aria-hidden="true" tabindex="-1"></a><span class="st">L71.73076923076923,280</span></span>
+<span id="cb10-71"><a href="#cb10-71" aria-hidden="true" tabindex="-1"></a><span class="st">L52.69230769230769,280</span></span>
+<span id="cb10-72"><a href="#cb10-72" aria-hidden="true" tabindex="-1"></a><span class="st">L52.69230769230769,280</span></span>
+<span id="cb10-73"><a href="#cb10-73" aria-hidden="true" tabindex="-1"></a><span class="st">L40,280Z&quot;</span>&gt;</span>
+<span id="cb10-74"><a href="#cb10-74" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">path</span>&gt;</span></code></pre></div>
 </section>
-<section id="example-factory-pattern" class="slide level2">
-<h2>Example: Factory Pattern</h2>
-<p>LLVM project uses a static builder method that returns the thing or an Error object. Does not leave you with an unitialized object or a bad state.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Reader <span class="op">{</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">static</span> Expected<span class="op">&lt;</span>Foo<span class="op">&gt;</span> Create<span class="op">(</span>path P<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    Error Err <span class="op">=</span> Error<span class="op">::</span>success<span class="op">();</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    Foo Reader<span class="op">{</span>P<span class="op">,</span> Err<span class="op">};</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>Err<span class="op">)</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> <span class="bu">std::</span>move<span class="op">(</span>Err<span class="op">);</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">std::</span>move<span class="op">(</span>F<span class="op">);</span></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span><span class="op">:</span></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  Foo<span class="op">(</span>path P<span class="op">,</span> Error <span class="op">&amp;</span>Err<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>        <span class="co">/* check and reset Err</span></span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="co">       Acquire resources to build object. */</span></span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+<section id="d3-library-line-generator" class="slide level2">
+<h2>D3 Library line generator</h2>
+<p>Handy function for generating path’s line commands from data.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> line_gen <span class="op">=</span> d3<span class="op">.</span><span class="fu">line</span>()</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">x</span>(d <span class="kw">=&gt;</span> <span class="fu">x_pos_scale</span>(d<span class="op">.</span><span class="at">start</span>))</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">y</span>(d <span class="kw">=&gt;</span> <span class="fu">y_depth_scale</span>(d<span class="op">.</span><span class="at">mean</span>))</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">curve</span>(d3<span class="op">.</span><span class="at">curveStepAfter</span>)<span class="op">;</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>d3<span class="op">.</span><span class="fu">select</span>(<span class="st">&quot;#depth-line&quot;</span>)<span class="op">.</span><span class="fu">selectAll</span>()</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">data</span>([cov_data])</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">enter</span>()</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">append</span>(<span class="st">&quot;path&quot;</span>)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">style</span>(<span class="st">&quot;stroke-width&quot;</span><span class="op">,</span> <span class="dv">1</span>)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">style</span>(<span class="st">&quot;stroke&quot;</span><span class="op">,</span> <span class="st">&quot;red&quot;</span>)</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">style</span>(<span class="st">&quot;fill&quot;</span><span class="op">,</span> <span class="st">&quot;none&quot;</span>)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">attr</span>(<span class="st">&#39;d&#39;</span><span class="op">,</span> line_gen)<span class="op">;</span></span></code></pre></div>
 </section>
-<section id="another-dependency" class="slide level2">
-<h2>Another Dependency?</h2>
-<p>Would need the LLVM support libary which can be <a href="https://llvm.org/docs/CMake.html#embedding-llvm-in-your-project">embedded</a></p>
-<blockquote>
-<p>From LLVM 3.5 onwards the CMake build system exports LLVM libraries as importable CMake targets.</p>
-</blockquote>
-<p>Small build config footprint.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode cmake"><code class="sourceCode cmake"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># llvmorg-17.0.6</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">FetchContent_Declare</span>(</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    llvm</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    GIT_REPOSITORY https://github.com/llvm/llvm-project.git</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    GIT_TAG bab01aead7d7a34436bc8e1639b90227374f079e </span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    GIT_SHALLOW <span class="ot">TRUE</span></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    SOURCE_SUBDIR llvm</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="fu">llvm_map_components_to_libnames</span>(<span class="dv">LLVM_LIBRARIES</span> support)</span></code></pre></div>
+<section id="path-in-action" class="slide level2">
+<h2>Path in Action</h2>
+<svg id="p-demo" height="300" width="700">
+<rect id="bkgd" height="100%" width="100%" fill="lightgrey"/> <clipPath id="depth-clip"> <rect x="0%" y="0%" width="100%" height="100%"></rect> </clipPath> <rect id="bkgd" height="100%" width="100%" fill="lightgrey"/> <g id="depths"></g> <g id="dtop"></g> <g id="axis-labs" style="font-size: 12px;"> <text transform="translate(10 180) rotate(-90)">depth</text> </g> <g id="pos-axis"></g> <g id="depth-axis"></g>
+</svg>
+<script>
+let cov_data = [
+  { "chrom": "1", "end": 50185001, "mean": 36.3528, "start": 50185000 },
+  { "chrom": "1", "end": 50185004, "mean": 35.9806, "start": 50185002 },
+  { "chrom": "1", "end": 50185005, "mean": 36.4722, "start": 50185005 },
+  { "chrom": "1", "end": 50185011, "mean": 36.1583, "start": 50185006 },
+  { "chrom": "1", "end": 50185013, "mean": 36.2833, "start": 50185012 },
+  { "chrom": "1", "end": 50185017, "mean": 36.1222, "start": 50185014 },
+  { "chrom": "1", "end": 50185018, "mean": 36.6639, "start": 50185018 },
+  { "chrom": "1", "end": 50185019, "mean": 36.075, "start": 50185019 },
+  { "chrom": "1", "end": 50185020, "mean": 36.7889, "start": 50185020 },
+  { "chrom": "1", "end": 50185022, "mean": 35.9389, "start": 50185021 },
+  { "chrom": "1", "end": 50185023, "mean": 36.6417, "start": 50185023 },
+  { "chrom": "1", "end": 50185026, "mean": 35.8694, "start": 50185024 },
+  { "chrom": "1", "end": 50185027, "mean": 46.3778, "start": 50185027 },
+  { "chrom": "1", "end": 50185028, "mean": 46.1444, "start": 50185028 },
+  { "chrom": "1", "end": 50185030, "mean": 46.5, "start": 50185029 },
+  { "chrom": "1", "end": 50185032, "mean": 46.0417, "start": 50185031 },
+  { "chrom": "1", "end": 50185033, "mean": 46.3806, "start": 50185033 },
+  { "chrom": "1", "end": 50185039, "mean": 45.8056, "start": 50185034 },
+  { "chrom": "1", "end": 50185042, "mean": 45.4833, "start": 50185040 },
+  { "chrom": "1", "end": 50185044, "mean": 35.95, "start": 50185043 },
+  { "chrom": "1", "end": 50185046, "mean": 35.3972, "start": 50185045 },
+  { "chrom": "1", "end": 50185053, "mean": 35.9722, "start": 50185047 },
+  { "chrom": "1", "end": 50185054, "mean": 35.3389, "start": 50185054 },
+  { "chrom": "1", "end": 50185055, "mean": 35.625, "start": 50185055 },
+  { "chrom": "1", "end": 50185056, "mean": 15.5278, "start": 50185056 },
+  { "chrom": "1", "end": 50185057, "mean": 16.0111, "start": 50185057 },
+  { "chrom": "1", "end": 50185059, "mean": 15.5722, "start": 50185058 },
+  { "chrom": "1", "end": 50185077, "mean": 15.8417, "start": 50185060 },
+  { "chrom": "1", "end": 50185080, "mean": 15.2944, "start": 50185078 },
+  { "chrom": "1", "end": 50185081, "mean": 14.8667, "start": 50185081 },
+  { "chrom": "1", "end": 50185083, "mean": 35.125, "start": 50185082 },
+  { "chrom": "1", "end": 50185095, "mean": 34.8333, "start": 50185084 },
+  { "chrom": "1", "end": 50185096, "mean": 34.9611, "start": 50185096 },
+  { "chrom": "1", "end": 50185102, "mean": 34.5167, "start": 50185097 },
+  { "chrom": "1", "end": 50185103, "mean": 34.0444, "start": 50185103 },
+  { "chrom": "1", "end": 50185106, "mean": 34.4611, "start": 50185104 }];
+
+let max_depth = Math.ceil(d3.max(cov_data, d => d.mean));
+let max_pos = d3.max(cov_data, d => d.start);
+let min_pos = d3.min(cov_data, d => d.start);
+
+let x_pos_scale = d3.scaleLinear().domain([min_pos,max_pos]).range([40, 700]);
+let y_depth_scale = d3.scaleLinear().domain([0, max_depth]).range([280, 10]); 
+
+let cov_area = d3.area()
+  .x(  d  => x_pos_scale(d.start) )
+  .y0( () => 0)
+  .y1( () => 0)
+  .y0( () => 280 )
+  .y1( d  => y_depth_scale(d.mean) )
+  .curve(d3.curveStepAfter);
+
+d3.select("#depths").selectAll()
+   .data([cov_data])
+   .enter()
+  .append("path")
+    .style("fill", "#ffa37c")
+    .style("opacity", "50%")
+    .style("stroke-width", 0.1)
+    .style("stroke", "black")
+    .attr("id","depths-path")
+    .attr("clip-path", "url(#depth-clip)")
+    .attr("d", cov_area);
+
+d3.selectAll("#depth-axis")
+  .attr("transform", "translate(40 0)")
+  .call(d3.axisLeft(y_depth_scale));
+
+/* line generator */
+const line = d3.line()
+  .x(d => x_pos_scale(d.start))
+  .y(d => y_depth_scale(d.mean))
+  .curve(d3.curveStepAfter);
+  
+let tracer = d3.selectAll("#dtop").selectAll()
+  .data([cov_data])
+  .enter()
+  .append("path")
+    .style("stroke-width", 1)
+    .style("stroke", "red")
+    .style("fill", "none")
+    .attr('d', line);
+
+const length = tracer.node().getTotalLength();
+
+function reptrace() {
+  tracer.attr("stroke-dasharray", length + " " + length)
+        .attr("stroke-dashoffset", length)
+          .transition()
+          .ease(d3.easeLinear)
+          .attr("stroke-dashoffset", 0)
+          .duration(6000)
+          .on("end", () => setTimeout(reptrace, 1000));
+};
+
+reptrace();
+
+</script>
 </section></section>
 <section id="end-of-slides" class="title-slide slide level1">
 <h1>End of Slides</h1>

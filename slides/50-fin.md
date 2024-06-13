@@ -1,6 +1,6 @@
 ---
 author: Colin Gross
-title: Return to C++
+title: SVG
 date: 2024-02-29
 ---
 
