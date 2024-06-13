@@ -110,7 +110,7 @@ let y_scale = d3.scaleLinear()
   </g>
 </svg>
 
-Subsequent data can be mapped without concern using the scales.
+Let the scales handle mapping data values to plotting space.
 ```js
     .attr("x", d => x_scale(d.cyl))
     .attr("y", d => y_scale(d.mpg))

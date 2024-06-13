@@ -5,8 +5,8 @@ date: 2024-02-29
 ---
 
 # SVG Format
-Image format based on XML.
-Open standard developed for the web.
+- Image format based on XML.
+- Open standard developed for the web.
 
 ## Describes Geometries and Styling
 
